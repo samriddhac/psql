@@ -15,6 +15,11 @@ var (
 	Database string = ""
 )
 
+type User struct {
+	ID string
+	Username string
+}
+
 func openConnection() (*sqlx.DB, error) {
 	conn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		HostName, Port, UserName, Password, Database)
@@ -25,13 +30,13 @@ func openConnection() (*sqlx.DB, error) {
 	return db, nil
 }
 
-func ExecuteQuery(query string, args ...interface{}) (*[]map[string]interface{}, error) {
+func ExecuteQueryUsersAll(query string, args ...interface{}) (*[]User, error) {
 	db, err := openConnection()
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
-	response := []map[string]interface{}{}
+	response := []User{}
 	dataerr := db.Select(&response, query, args...)
 	if dataerr != nil {
 		return nil, dataerr
